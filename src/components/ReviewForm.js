@@ -28,7 +28,7 @@ function ReviewForm() {
         value={rating}
         onChange={handleRatingChange}
       ></input>
-      <input value={content} onChange={handleContentChange}></input>
+      <textarea value={content} onChange={handleContentChange}></textarea>
     </form>
   );
 }
