@@ -1,13 +1,19 @@
 import { useState } from "react";
+import { createReviews } from "../api";
 import FileInput from "./FileInput";
+import RatingInput from "./RatingInput";
 
-function ReviewForm() {
-  const [values, setValue] = useState({
-    title: "",
-    rating: 0,
-    content: "",
-    imgFile: null,
-  });
+const INITIAL_VALUES = {
+  title: "",
+  rating: 0,
+  content: "",
+  imgFile: null,
+};
+
+function ReviewForm({ onSubmitSuccess }) {
+  const [isSubmintting, setIsSubmitting] = useState(false);
+  const [submittingError, setSubmittinError] = useState(null);
+  const [values, setValue] = useState(INITIAL_VALUES);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -21,9 +27,28 @@ function ReviewForm() {
     }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log({ value: values });
+    const formData = new FormData();
+    formData.append("title", values.title);
+    formData.append("rating", values.rating);
+    formData.append("content", values.content);
+    formData.append("imgFile", values.imgFile);
+
+    let result;
+    try {
+      setSubmittinError(null);
+      setIsSubmitting(true);
+      result = await createReviews(formData);
+    } catch (error) {
+      setSubmittinError(error);
+      return;
+    } finally {
+      setIsSubmitting(false);
+    }
+    const { review } = result;
+    onSubmitSuccess(review);
+    setValue(INITIAL_VALUES);
   };
 
   return (
@@ -38,20 +63,23 @@ function ReviewForm() {
         value={values.title}
         onChange={handleInputChange}
       ></input>
-      <input
+      <RatingInput
         type="number"
         max={5}
         min={1}
         name="rating"
         value={values.rating}
-        onChange={handleInputChange}
-      ></input>
+        onChange={handleChange}
+      />
       <textarea
         name="content"
         value={values.content}
         onChange={handleInputChange}
       ></textarea>
-      <button type="submit">확인</button>
+      <button type="submit" disabled={isSubmintting}>
+        확인
+      </button>
+      {submittingError?.message && <div>{submittingError.message}</div>}
     </form>
   );
 }
