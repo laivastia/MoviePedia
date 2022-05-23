@@ -1,5 +1,4 @@
 import { useState } from "react";
-import { createReviews } from "../api";
 import FileInput from "./FileInput";
 import RatingInput from "./RatingInput";
 
@@ -10,10 +9,16 @@ const INITIAL_VALUES = {
   imgFile: null,
 };
 
-function ReviewForm({ onSubmitSuccess }) {
+function ReviewForm({
+  initialValues = INITIAL_VALUES,
+  initialPreview,
+  onSubmitSuccess,
+  onSubmit,
+  onCancel,
+}) {
   const [isSubmintting, setIsSubmitting] = useState(false);
   const [submittingError, setSubmittinError] = useState(null);
-  const [values, setValue] = useState(INITIAL_VALUES);
+  const [values, setValue] = useState(initialValues);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -39,7 +44,7 @@ function ReviewForm({ onSubmitSuccess }) {
     try {
       setSubmittinError(null);
       setIsSubmitting(true);
-      result = await createReviews(formData);
+      result = await onSubmit(formData);
     } catch (error) {
       setSubmittinError(error);
       return;
@@ -56,6 +61,7 @@ function ReviewForm({ onSubmitSuccess }) {
       <FileInput
         name="imgFile"
         value={values.imgFile}
+        initialPreview={initialPreview}
         onChange={handleChange}
       />
       <input
@@ -75,7 +81,8 @@ function ReviewForm({ onSubmitSuccess }) {
         name="content"
         value={values.content}
         onChange={handleInputChange}
-      ></textarea>
+      />
+      {onCancel && <button onClick={onCancel}>취소</button>}
       <button type="submit" disabled={isSubmintting}>
         확인
       </button>
