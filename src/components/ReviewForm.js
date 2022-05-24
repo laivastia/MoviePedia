@@ -1,4 +1,5 @@
 import { useState } from "react";
+import useAsync from "../hooks/useAsync";
 import FileInput from "./FileInput";
 import RatingInput from "./RatingInput";
 
@@ -16,8 +17,7 @@ function ReviewForm({
   onSubmit,
   onCancel,
 }) {
-  const [isSubmintting, setIsSubmitting] = useState(false);
-  const [submittingError, setSubmittinError] = useState(null);
+  const [isSubmintting, submittingError, onSubmitAsync] = useAsync(onSubmit);
   const [values, setValue] = useState(initialValues);
 
   const handleInputChange = (e) => {
@@ -40,17 +40,9 @@ function ReviewForm({
     formData.append("content", values.content);
     formData.append("imgFile", values.imgFile);
 
-    let result;
-    try {
-      setSubmittinError(null);
-      setIsSubmitting(true);
-      result = await onSubmit(formData);
-    } catch (error) {
-      setSubmittinError(error);
-      return;
-    } finally {
-      setIsSubmitting(false);
-    }
+    const result = await onSubmitAsync(formData);
+    if (!result) return;
+
     const { review } = result;
     onSubmitSuccess(review);
     setValue(INITIAL_VALUES);
@@ -82,7 +74,11 @@ function ReviewForm({
         value={values.content}
         onChange={handleInputChange}
       />
-      {onCancel && <button onClick={onCancel}>취소</button>}
+      {onCancel && (
+        <button type="button" onClick={onCancel}>
+          취소
+        </button>
+      )}
       <button type="submit" disabled={isSubmintting}>
         확인
       </button>

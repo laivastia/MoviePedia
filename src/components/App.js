@@ -1,10 +1,11 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import {
   createReviews,
   deleteReviews,
   getReviews,
   updateReviews,
 } from "../api";
+import useAsync from "../hooks/useAsync";
 import ReviewForm from "./ReviewForm";
 import ReviewList from "./ReviewList";
 
@@ -15,8 +16,7 @@ function App() {
   const [order, setOrder] = useState("createdAt");
   const [offset, setOffset] = useState(0);
   const [hasNext, setHasNext] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
-  const [loadingError, setLodingError] = useState(null);
+  const [isLoading, loadingError, getReviewsAsync] = useAsync(getReviews);
 
   const sortedItems = items.sort((a, b) => b[order] - a[order]);
 
@@ -30,27 +30,22 @@ function App() {
     setItems((prevItems) => prevItems.filter((item) => item.id !== id));
   };
 
-  const handleLoad = async (options) => {
-    let result;
-    try {
-      setIsLoading(true);
-      setLodingError(null);
-      result = await getReviews(options);
-    } catch (error) {
-      setLodingError(error);
-      return;
-    } finally {
-      setIsLoading(false);
-    }
-    const { reviews, paging } = result;
-    if (options.offset === 0) {
-      setItems(reviews);
-    } else {
-      setItems((prevItems) => [...prevItems, ...reviews]);
-    }
-    setOffset(options.offset + reviews.length);
-    setHasNext(paging.hasNext);
-  };
+  const handleLoad = useCallback(
+    async (options) => {
+      const result = await getReviewsAsync(options);
+      if (!result) return;
+
+      const { reviews, paging } = result;
+      if (options.offset === 0) {
+        setItems(reviews);
+      } else {
+        setItems((prevItems) => [...prevItems, ...reviews]);
+      }
+      setOffset(options.offset + reviews.length);
+      setHasNext(paging.hasNext);
+    },
+    [getReviewsAsync]
+  );
 
   const handleLoadMore = async () => {
     handleLoad({ order, offset, limit: LIMIT });
@@ -73,7 +68,7 @@ function App() {
 
   useEffect(() => {
     handleLoad({ order, offset: 0, limit: LIMIT });
-  }, [order]);
+  }, [order, handleLoad]);
 
   return (
     <div>
