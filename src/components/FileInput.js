@@ -16,7 +16,7 @@ function FileInput({ name, value, onChange, initialPreview }) {
     if (!inputNode) return;
 
     inputNode.value = "";
-    onChange(name, initialPreview);
+    onChange(name, null);
   };
 
   useEffect(() => {
