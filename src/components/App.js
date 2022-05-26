@@ -5,8 +5,9 @@ import {
   getReviews,
   updateReviews,
 } from "../api";
-import LocaleContext from "../contexts/LocaleCotext";
+import { LocaleProvider } from "../contexts/LocaleCotext";
 import useAsync from "../hooks/useAsync";
+import LocaleSelect from "./LocaleSelect";
 import ReviewForm from "./ReviewForm";
 import ReviewList from "./ReviewList";
 
@@ -72,8 +73,10 @@ function App() {
   }, [order, handleLoad]);
 
   return (
-    <LocaleContext.Provider value={"ko"}>
+    <LocaleProvider defaultValue="ko">
+      {/*<LocaleContext.Provider value={{ locale, setLocale }}>*/}
       <div>
+        <LocaleSelect />
         <div>
           <button onClick={handleNewestClick}>최신순</button>
           <button onClick={handleBestClick}>베스트순</button>
@@ -95,7 +98,8 @@ function App() {
         )}
         {loadingError?.message && <span>{loadingError.message}</span>}
       </div>
-    </LocaleContext.Provider>
+      {/*</LocaleContext.Provider>*/}
+    </LocaleProvider>
   );
 }
 

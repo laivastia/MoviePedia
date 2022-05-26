@@ -1,5 +1,6 @@
 import { useState } from "react";
 import useAsync from "../hooks/useAsync";
+import useTranslate from "../hooks/useTranslate";
 import FileInput from "./FileInput";
 import RatingInput from "./RatingInput";
 
@@ -17,6 +18,7 @@ function ReviewForm({
   onSubmit,
   onCancel,
 }) {
+  const t = useTranslate();
   const [isSubmintting, submittingError, onSubmitAsync] = useAsync(onSubmit);
   const [values, setValue] = useState(initialValues);
 
@@ -76,11 +78,11 @@ function ReviewForm({
       />
       {onCancel && (
         <button type="button" onClick={onCancel}>
-          취소
+          {t("cancel button")}
         </button>
       )}
       <button type="submit" disabled={isSubmintting}>
-        확인
+        {t("confirm button")}
       </button>
       {submittingError?.message && <div>{submittingError.message}</div>}
     </form>
