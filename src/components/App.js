@@ -114,7 +114,7 @@ function App() {
             onClick={handleBestClick}
             selected={order === "rating"}
           >
-            {t("rating")}
+            {t("best")}
           </AppSortButton>
         </div>
         <div className="App-ReviewList">
@@ -124,7 +124,7 @@ function App() {
             onUpdate={updateReviews}
             onUpdateSuccess={handleUpdateSuccess}
           />
-          {hasNext && (
+          {hasNext ? (
             <button
               className="App-load-more-button"
               disabled={isLoading}
@@ -132,12 +132,16 @@ function App() {
             >
               더 보기
             </button>
+          ) : (
+            <div className="App-load-more-button" />
           )}
           {loadingError?.message && <span>{loadingError.message}</span>}
         </div>
       </div>
-      <footer>
-        <div></div>
+      <footer className="App-footer">
+        <div className="App-footer-container">
+          {t("terms of service")} | {t("privacy policy")}
+        </div>
       </footer>
     </div>
   );
