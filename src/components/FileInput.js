@@ -3,9 +3,8 @@ import placeholderImg from "../assets/preview-placeholder.png";
 import resetImg from "../assets/ic-reset.png";
 import "./FileInput.css";
 
-function FileInput({ name, value, onChange, initialPreview, className = "" }) {
+function FileInput({ className = "", name, value, initialPreview, onChange }) {
   const [preview, setPreview] = useState(initialPreview);
-
   const inputRef = useRef();
 
   const handleChange = (e) => {
@@ -47,7 +46,7 @@ function FileInput({ name, value, onChange, initialPreview, className = "" }) {
         ref={inputRef}
       />
       {value && (
-        <button className="FileInpput-clear-button" onClick={handleClearClick}>
+        <button className="FileInput-clear-button" onClick={handleClearClick}>
           <img src={resetImg} alt="선택해제" />
         </button>
       )}

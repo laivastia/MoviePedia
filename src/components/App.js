@@ -12,19 +12,24 @@ import ReviewList from "./ReviewList";
 import "./App.css";
 import logoImg from "../assets/logo.png";
 import ticketImg from "../assets/ticket.png";
-import t from "../hooks/useTranslate";
+import useTranslate from "../hooks/useTranslate";
 
 const LIMIT = 6;
 
 function AppSortButton({ onClick, selected, children }) {
   return (
-    <button onClick={onClick} selected={selected}>
+    <button
+      onClick={onClick}
+      className={`AppSortButton ${selected ? "selected" : ""}`}
+      disabled={selected}
+    >
       {children}
     </button>
   );
 }
 
 function App() {
+  const t = useTranslate();
   const [items, setItems] = useState([]);
   const [order, setOrder] = useState("createdAt");
   const [offset, setOffset] = useState(0);
@@ -106,7 +111,7 @@ function App() {
         <div className="App-sorts">
           <AppSortButton
             onClick={handleNewestClick}
-            selected={order === "crearedAt"}
+            selected={order === "createdAt"}
           >
             {t("newest")}
           </AppSortButton>
@@ -130,7 +135,7 @@ function App() {
               disabled={isLoading}
               onClick={handleLoadMore}
             >
-              더 보기
+              {t("load more")}
             </button>
           ) : (
             <div className="App-load-more-button" />

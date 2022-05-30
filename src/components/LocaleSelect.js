@@ -1,4 +1,5 @@
 import { useLocale, useSetLocale } from "../contexts/LocaleCotext";
+import "./LocaleSelect.css";
 
 function LocaleSelect() {
   const locale = useLocale();
